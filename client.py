@@ -1,52 +1,43 @@
-from asyncio import tasks
+from threading import Thread
 import websockets
 import asyncio
-from concurrent.futures.thread import ThreadPoolExecutor
 
 username = ""
-msg_list = []
 
 
-def always_input():
-    while True:
-        text = input("input here: ")
-        msg_list.append(text)
-        
+class SendThread(Thread):
+    websocket = None
+
+    def __init__(self, websocket):
+        super().__init__()
+        self.websocket = websocket
+
+    def run(self):
+        asyncio.run(self.always_input(self.websocket))
+
+    async def always_input(self, websocket):
+        print("start input")
+        while True:
+            text = input("input here: ")
+            await websocket.send(text)
 
 
-async def async_input():
-    await asyncio.get_running_loop().run_in_executor(
-        ThreadPoolExecutor(1),
-        always_input
-    )
-
-
-async def send(websocket):
-    print("start sending")
-    while True:
-        if len(msg_list) > 0:
-            msg = msg_list.pop()
-            await websocket.send(msg)
-        else:
-            await asyncio.sleep(1)
-        
+def send(websocket):
+    t = SendThread(websocket)
+    t.start()
 
 
 async def recv(websocket):
     print("start receiving")
     while True:
-        greeting = await websocket.recv()
-        print(f"< {greeting}")
+        text = await websocket.recv()
+        print(f"{text}")
 
 
 async def action(websocket):
-    task1 = asyncio.create_task(send(websocket))
-    task2 = asyncio.create_task(recv(websocket))
-    task3 = asyncio.create_task(async_input())
-    # while True:
-    await task1
-    await task2
-    await task3
+    send(websocket)
+    rect_task = asyncio.create_task(recv(websocket))
+    await rect_task
 
 
 async def main():
@@ -56,4 +47,3 @@ async def main():
         await action(websocket)
 
 asyncio.run(main())
-asyncio.get_event_loop().run_until_complete(main())
