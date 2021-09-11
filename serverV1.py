@@ -6,6 +6,10 @@ websocket_list = []
 
 
 async def handler(websocket, path):
+    '''
+    for each client trying to connect the server
+    if not exists, launcing a connection
+    '''
     if path in user_list:
         pass
     else:
@@ -17,7 +21,7 @@ async def handler(websocket, path):
 
 async def action(websocket, path):
     '''
-    建立一个连接以后的主逻辑
+    the main logic after building connection
     '''
     while True:
         text = await websocket.recv()
@@ -27,13 +31,16 @@ async def action(websocket, path):
 
 
 async def broadcast(websocket_list, msg):
+    '''
+    broadcasting msgs to all client
+    '''
     for websocket in websocket_list:
         await websocket.send(msg)
 
 
 def main():
     start_server = websockets.serve(
-        handler, "localhost", 8002)  # 每个请求都会起一个新的ws连接
+        handler, "localhost", 8002)  # launch a new ws connection of each client
     asyncio.get_event_loop().run_until_complete(start_server)
     print("start serving on localhost:8002")
 
