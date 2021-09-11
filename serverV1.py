@@ -42,7 +42,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    # todo: secure tsl
-    # todo: handle closing and exception
-    # todo: use official websockets.broadcase
