@@ -4,7 +4,7 @@ class DebugConfig(object):
     '''
     headers = dict()
     host = "127.0.0.1"
-    port = 8002
+    port = "8002"
 
 
 class ProductionConfig(object):
@@ -12,8 +12,8 @@ class ProductionConfig(object):
     生产环境 server 配置
     '''
     headers = dict()
-    host = "127.0.0.1"
-    port = 8002
+    host = "0.0.0.0"
+    port = "8002"
 
 
 configs = {

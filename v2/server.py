@@ -64,7 +64,7 @@ def main():
     start_server = websockets.serve(
         handler, config.host, config.port)  # launch a new ws connection of each client
     asyncio.get_event_loop().run_until_complete(start_server)
-    print("start serving on localhost:8002")
+    print(f"start serving on {config.host}:{config.port}")
 
     asyncio.get_event_loop().run_forever()
 
