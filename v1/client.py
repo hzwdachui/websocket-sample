@@ -43,8 +43,8 @@ async def recv(websocket):
 
 async def action(websocket):
     send(websocket)
-    rect_task = asyncio.create_task(recv(websocket))
-    await rect_task
+    recv_task = asyncio.create_task(recv(websocket))
+    await recv_task
 
 
 async def main():
