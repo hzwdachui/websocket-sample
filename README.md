@@ -30,6 +30,7 @@ python3 client.py
 - customize port and host   \[check\]
     - config the server
 - more uesr friendly input interface    \[check\]
+- client reconnect
 
 # generate requirements
 ```python
