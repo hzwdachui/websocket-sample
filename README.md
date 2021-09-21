@@ -48,3 +48,8 @@ crtl-k + f
 ```python
 pipreqs . --force
 ```
+
+## commit comment
+- ``feat/``  new features
+- ``doc/`` add documents
+- ``fix/`` fix bugs
