@@ -5,6 +5,7 @@ class Broadcaster:
     """广播工具类-用于封装房间消息传递功能
     当前采用内存实现，实际上可以用 Redis、RabbitMQ 来实现
     """
+
     def __init__(self):
         self.channels = dict()
 
@@ -31,6 +32,7 @@ class Broadcaster:
 class Subscriber:
     """消息订阅类-用于接收消息
     """
+
     def __init__(self, queue):
         self.queue = queue
 

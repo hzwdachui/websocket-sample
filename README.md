@@ -8,11 +8,13 @@ pip3 install -r requirements.txt
 
 # server
 ```python
-python3 serverV1.py
+# cd into a certain version  e.g. cd v1
+python3 server.py
 ```
 
 # client
 ```python
+# cd into a certain version  e.g. cd v1
 python3 client.py
 ```
 
@@ -32,11 +34,17 @@ python3 client.py
 - more uesr friendly input interface    \[check\]
 - client reconnect
 
-# generate requirements
-```python
-pipreqs . --force
-```
-
 # input area
 prompt_toolkit: https://python-prompt-toolkit.readthedocs.io/en/master/  
 ref: https://github.com/zlqm/ws-ui
+
+# PR
+## lint your code
+please use pylint to lint your code
+```
+crtl-k + f
+```
+## generate requirements
+```python
+pipreqs . --force
+```
