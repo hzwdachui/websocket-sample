@@ -1,10 +1,13 @@
+from utils.logService import LogService
 import asyncio
 import websockets
-from server_config import configs
+from conf.server_config import configs
 import sys
-
-user_list = []
-websocket_list = []
+import os
+sys.path.append(os.path.abspath('../'))
+USER_LIST = []
+WEBSOCKET_LIST = []
+LOGGER = None
 
 
 async def handler(websocket, path):
@@ -13,24 +16,24 @@ async def handler(websocket, path):
     if not exists, launcing a connection
     '''
     try:
-        if path in user_list:
+        if path in USER_LIST:
             await websocket.close()
         else:
-            user_list.append(path)
-            websocket_list.append(websocket)
-            await broadcast(websocket_list, f"{path} comes")
-            print(f"{path} comes")   # debug
+            USER_LIST.append(path)
+            WEBSOCKET_LIST.append(websocket)
+            await broadcast(WEBSOCKET_LIST, f"{path} comes")
+            LOGGER.debug(f"{path} comes")
             await action(websocket, path)
     except websockets.exceptions.ConnectionClosedOK:
-        websocket_list.remove(websocket)
-        user_list.remove(path)
-        await broadcast(websocket_list, f"{path} leaves")
-        print(f"{path} leaves")  # debug
+        WEBSOCKET_LIST.remove(websocket)
+        USER_LIST.remove(path)
+        await broadcast(WEBSOCKET_LIST, f"{path} leaves")
+        LOGGER.debug(f"{path} leaves")
     except Exception as err:
-        websocket_list.remove(websocket)
-        user_list.remove(path)
+        WEBSOCKET_LIST.remove(websocket)
+        USER_LIST.remove(path)
         msg = f'{type(err).__name__}: {err}'
-        print(msg)  # debug
+        LOGGER.debug(msg)
 
 
 async def action(websocket, path):
@@ -40,23 +43,25 @@ async def action(websocket, path):
     while True:
         text = await websocket.recv()
         broadcast_text = f"{path}: {text}"
-        await broadcast(websocket_list, broadcast_text)
-        print(f"{broadcast_text}")  # debug
+        await broadcast(WEBSOCKET_LIST, broadcast_text)
+        LOGGER.debug(f"{broadcast_text}")
 
 
-async def broadcast(websocket_list, msg):
+async def broadcast(WEBSOCKET_LIST, msg):
     '''
     broadcasting msgs to all client
     '''
-    for websocket in websocket_list:
+    for websocket in WEBSOCKET_LIST:
         await websocket.send(msg)
 
 
 def main():
+    global LOGGER
     try:
         config_type = sys.argv[1]
         config = load_config(config_type)
-        print(f"working on the {config_type} config")
+        LOGGER = LogService(config_type).getLogger()
+        LOGGER.info(f"working on the {config_type} config")
     except IndexError:
         sys.stderr.write('please provide config type\n')
         return
@@ -64,8 +69,6 @@ def main():
     start_server = websockets.serve(
         handler, config.host, config.port)  # launch a new ws connection of each client
     asyncio.get_event_loop().run_until_complete(start_server)
-    print(f"start serving on {config.host}:{config.port}")
-
     asyncio.get_event_loop().run_forever()
 
 
